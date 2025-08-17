@@ -1,0 +1,12 @@
+# Ignore Python cache 
+__pycache__/ 
+*.pyc 
+*.pyo 
+venv/ 
+env/ 
+instance/ 
+*.db 
+*.sqlite3 
+.DS_Store 
+Thumbs.db 
+.docker/ 
