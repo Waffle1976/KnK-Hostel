@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2 class="text-center mb-4 animate__animated animate__fadeIn"><i class="fas fa-tachometer-alt me-2"></i> Hostel Dashboard</h2>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card animate__animated animate__fadeInUp">
+            <div class="card-body">
+                <i class="fas fa-door-open icon-stat"></i>
+                <div class="stat-value">{{ rooms|length }}</div>
+                <div class="stat-label">Total Rooms</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
+            <div class="card-body">
+                <i class="fas fa-users icon-stat"></i>
+                <div class="stat-value">{{ students|length }}</div>
+                <div class="stat-label">Total Students</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+            <div class="card-body">
+                <i class="fas fa-bed icon-stat"></i>
+                <div class="stat-value">{{ occupied_beds }}</div>
+                <div class="stat-label">Beds Occupied</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
+            <div class="card-body">
+                <i class="fas fa-bed icon-stat"></i>
+                <div class="stat-value">{{ available_beds }}</div>
+                <div class="stat-label">Beds Available</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4 animate__animated animate__fadeInLeft">
+            <div class="card-header">
+                <h3><i class="fas fa-door-open me-2"></i>Rooms Status</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Room Number</th>
+                                <th>Capacity</th>
+                                <th>Occupied</th>
+                                <th>Available</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for room in rooms %}
+                            <tr>
+                                <td><i class="fas fa-door-closed me-1"></i> {{ room.room_number }}</td>
+                                <td><i class="fas fa-bed me-1"></i> {{ room.capacity }}</td>
+                                <td><i class="fas fa-user me-1"></i> {{ room.occupied }}</td>
+                                <td><i class="fas fa-check-circle me-1"></i> {{ room.capacity - room.occupied }}</td>
+                                <td>
+                                    {% if room.capacity == room.occupied %}
+                                        <span class="badge bg-danger">Full</span>
+                                    {% elif room.occupied == 0 %}
+                                        <span class="badge bg-success">Empty</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Partial</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3">
+                    <a href="{{ url_for('add_room') }}" class="btn btn-primary">
+                        <i class="fas fa-plus-circle me-1"></i> Add New Room
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4 animate__animated animate__fadeInRight">
+            <div class="card-header">
+                <h3><i class="fas fa-users me-2"></i>Students List</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Student ID</th>
+                                <th>Room</th>
+                                <th>Check-in Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                            <tr>
+                                <td><i class="fas fa-user-graduate me-1"></i> {{ student.name }}</td>
+                                <td><i class="fas fa-id-card me-1"></i> {{ student.student_id }}</td>
+                                <td><i class="fas fa-door-open me-1"></i> {{ student.room.room_number }}</td>
+                                <td><i class="fas fa-calendar-alt me-1"></i> {{ student.check_in_date.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    <form method="POST" action="{{ url_for('remove_student', student_id=student.id) }}" onsubmit="return confirm('Are you sure you want to remove this student?');">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-user-minus"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3">
+                    <a href="{{ url_for('add_student') }}" class="btn btn-primary">
+                        <i class="fas fa-user-plus me-1"></i> Add New Student
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

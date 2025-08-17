@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2 class="text-center mb-4 animate__animated animate__fadeIn"><i class="fas fa-history me-2"></i> Audit Logs</h2>
+    </div>
+</div>
+
+<div class="card animate__animated animate__fadeInUp">
+    <div class="card-header">
+        <h3><i class="fas fa-list me-2"></i>System Activity Logs</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped" id="auditTable">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag me-1"></i> ID</th>
+                        <th><i class="fas fa-tasks me-1"></i> Action</th>
+                        <th><i class="fas fa-tag me-1"></i> Entity Type</th>
+                        <th><i class="fas fa-info-circle me-1"></i> Details</th>
+                        <th><i class="fas fa-user me-1"></i> User</th>
+                        <th><i class="fas fa-clock me-1"></i> Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr class="animate__animated animate__fadeIn" style="animation-delay: {{ loop.index * 0.05 }}s;">
+                        <td>{{ log.id }}</td>
+                        <td>
+                            {% if log.action == 'add' %}
+                                <span class="badge bg-success">ADD</span>
+                            {% elif log.action == 'remove' %}
+                                <span class="badge bg-danger">REMOVE</span>
+                            {% elif log.action == 'login' %}
+                                <span class="badge bg-primary">LOGIN</span>
+                            {% elif log.action == 'logout' %}
+                                <span class="badge bg-warning">LOGOUT</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ log.action|upper }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ log.entity_type|capitalize }}</td>
+                        <td>{{ log.details }}</td>
+                        <td>{{ log.user.username if log.user else 'System' }}</td>
+                        <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add animation to new logs
+    document.addEventListener('DOMContentLoaded', function() {
+        // Highlight newest logs
+        const rows = document.querySelectorAll('#auditTable tbody tr');
+        if (rows.length > 0) {
+            rows[0].classList.add('table-primary');
+        }
+        
+        // Refresh logs every 30 seconds
+        setInterval(function() {
+            fetch('/api/audit_logs')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector('#auditTable tbody');
+                    // Check if we have new logs
+                    if (tbody.children.length > 0) {
+                        const firstLogId = parseInt(tbody.children[0].children[0].textContent);
+                        const newLogs = data.filter(log => log.id > firstLogId);
+                        
+                        if (newLogs.length > 0) {
+                            // Add new logs at the top
+                            newLogs.reverse().forEach(log => {
+                                const tr = document.createElement('tr');
+                                tr.className = 'animate__animated animate__fadeIn table-primary';
+                                
+                                // ID cell
+                                let td = document.createElement('td');
+                                td.textContent = log.id;
+                                tr.appendChild(td);
+                                
+                                // Action cell
+                                td = document.createElement('td');
+                                const badge = document.createElement('span');
+                                badge.className = 'badge';
+                                
+                                if (log.action === 'add') {
+                                    badge.className += ' bg-success';
+                                    badge.textContent = 'ADD';
+                                } else if (log.action === 'remove') {
+                                    badge.className += ' bg-danger';
+                                    badge.textContent = 'REMOVE';
+                                } else if (log.action === 'login') {
+                                    badge.className += ' bg-primary';
+                                    badge.textContent = 'LOGIN';
+                                } else if (log.action === 'logout') {
+                                    badge.className += ' bg-warning';
+                                    badge.textContent = 'LOGOUT';
+                                } else {
+                                    badge.className += ' bg-secondary';
+                                    badge.textContent = log.action.toUpperCase();
+                                }
+                                
+                                td.appendChild(badge);
+                                tr.appendChild(td);
+                                
+                                // Entity type cell
+                                td = document.createElement('td');
+                                td.textContent = log.entity_type.charAt(0).toUpperCase() + log.entity_type.slice(1);
+                                tr.appendChild(td);
+                                
+                                // Details cell
+                                td = document.createElement('td');
+                                td.textContent = log.details;
+                                tr.appendChild(td);
+                                
+                                // User cell
+                                td = document.createElement('td');
+                                td.textContent = log.user;
+                                tr.appendChild(td);
+                                
+                                // Timestamp cell
+                                td = document.createElement('td');
+                                td.textContent = log.timestamp;
+                                tr.appendChild(td);
+                                
+                                tbody.insertBefore(tr, tbody.firstChild);
+                                
+                                // Remove highlight from previous new logs
+                                setTimeout(() => {
+                                    const highlightedRows = document.querySelectorAll('.table-primary');
+                                    highlightedRows.forEach(row => {
+                                        if (row !== tr) {
+                                            row.classList.remove('table-primary');
+                                        }
+                                    });
+                                }, 5000);
+                            });
+                        }
+                    }
+                });
+        }, 30000);
+    });
+</script>
+{% endblock %}

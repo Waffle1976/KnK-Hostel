@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2 class="text-center mb-4 animate__animated animate__fadeIn"><i class="fas fa-bed me-2"></i> Beds Management</h2>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card animate__animated animate__fadeInUp">
+            <div class="card-body">
+                <i class="fas fa-bed icon-stat"></i>
+                <div class="stat-value">{{ total_beds }}</div>
+                <div class="stat-label">Total Beds</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
+            <div class="card-body">
+                <i class="fas fa-user-check icon-stat"></i>
+                <div class="stat-value">{{ occupied_beds }}</div>
+                <div class="stat-label">Occupied Beds</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+            <div class="card-body">
+                <i class="fas fa-check-circle icon-stat"></i>
+                <div class="stat-value">{{ available_beds }}</div>
+                <div class="stat-label">Available Beds</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4 animate__animated animate__fadeInUp">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3><i class="fas fa-door-open me-2"></i>Rooms and Beds</h3>
+        <a href="{{ url_for('add_room') }}" class="btn btn-primary">
+            <i class="fas fa-plus-circle me-1"></i> Add New Room
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Room Number</th>
+                        <th>Total Beds</th>
+                        <th>Occupied Beds</th>
+                        <th>Available Beds</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for room in rooms %}
+                    <tr>
+                        <td><i class="fas fa-door-closed me-1"></i> {{ room.room_number }}</td>
+                        <td><i class="fas fa-bed me-1"></i> {{ room.capacity }}</td>
+                        <td><i class="fas fa-user me-1"></i> {{ room.occupied }}</td>
+                        <td><i class="fas fa-check-circle me-1"></i> {{ room.capacity - room.occupied }}</td>
+                        <td>
+                            {% if room.capacity == room.occupied %}
+                                <span class="badge bg-danger">Full</span>
+                            {% elif room.occupied == 0 %}
+                                <span class="badge bg-success">Empty</span>
+                            {% else %}
+                                <span class="badge bg-warning">Partial</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('edit_room', room_id=room.id) }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i> Edit Capacity
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

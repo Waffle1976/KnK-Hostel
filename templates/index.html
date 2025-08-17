@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .hero-section {
+        position: relative;
+        height: 500px;
+        overflow: hidden;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .hero-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(0.7);
+        transition: transform 10s ease;
+    }
+    
+    .hero-section:hover .hero-image {
+        transform: scale(1.05);
+    }
+    
+    .hero-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        text-align: center;
+        padding: 2rem;
+        z-index: 1;
+    }
+    
+    .hero-content h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        animation: fadeInDown 1s ease;
+    }
+    
+    .hero-content p {
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin-bottom: 2rem;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        animation: fadeInUp 1s ease;
+    }
+    
+    .about-section {
+        background-color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        animation: fadeIn 1s ease;
+    }
+    
+    .about-card {
+        height: 100%;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .about-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+    
+    .about-icon {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+</style>
+
+<!-- Hero Section with Building Image -->
+<div class="hero-section animate__animated animate__fadeIn">
+    <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80" alt="Hostel Building" class="hero-image">
+    <div class="hero-content">
+        <h1 class="display-4">Welcome to KnK HOSTEL</h1>
+        <p class="lead">Your premier hostel management solution for comfortable and affordable student accommodation</p>
+        {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg animate__animated animate__pulse animate__infinite animate__slower">
+                <i class="fas fa-sign-in-alt me-2"></i> Login to System
+            </a>
+        {% else %}
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-tachometer-alt me-2"></i> Go to Dashboard
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- About Us Section -->
+<div class="about-section">
+    <h2 class="text-center mb-4"><i class="fas fa-info-circle me-2"></i>About Us</h2>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card about-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-building about-icon"></i>
+                    <h3>Our Facilities</h3>
+                    <p>KnK HOSTEL offers modern, well-maintained accommodation with all the amenities students need for a comfortable stay. Our facilities include high-speed internet, study areas, and common rooms for socializing.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card about-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-users about-icon"></i>
+                    <h3>Our Mission</h3>
+                    <p>We are committed to providing safe, affordable, and comfortable housing for students. Our mission is to create a supportive community where students can thrive academically and personally.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card about-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-shield-alt about-icon"></i>
+                    <h3>Our Values</h3>
+                    <p>We prioritize safety, respect, and inclusivity. Our management system ensures efficient operations, transparent communication, and responsive service to meet the needs of our residents.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header text-white">
+                <h3 class="mb-0"><i class="fas fa-star me-2"></i>Why Choose Our Hostel Management System?</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Efficient room and bed allocation</li>
+                            <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Real-time occupancy tracking</li>
+                            <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Comprehensive student management</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Detailed audit logging for all activities</li>
+                            <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> User-friendly interface for administrators</li>
+                            <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Secure authentication system</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
